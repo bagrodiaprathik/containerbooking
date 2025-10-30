@@ -1,0 +1,3 @@
+maersk:
+  api:
+    check-available-url: https://maersk.com/api/bookings/checkAvailable
