@@ -24,15 +24,13 @@ public class BookingService {
     
 
     public Mono<CheckAvailabilityResponse> checkAvailability(CheckAvailabilityRequest request) {
-        // You can pass the request body to the external API if needed,
-        // though the spec doesn't explicitly say to.
-        // For this example, we'll just call the endpoint.
         
-        return maerskWebClient.get() // Or .post() if it expects the request body
+        
+        return maerskWebClient.get() 
             .retrieve()
             .bodyToMono(ExternalAvailabilityResponse.class)
-            .map(response -> new CheckAvailabilityResponse(response.availableSpace() > 0)) // [cite: 44, 48]
-            .retry(3) // Simple retry as required by "reactive programming paradigms" 
+            .map(response -> new CheckAvailabilityResponse(response.availableSpace() > 0))
+            .retry(3)
             .onErrorResume(ex -> {
                 // Handle errors (e.g., external API is down)
                 // For now, assume unavailable
@@ -45,7 +43,7 @@ public class BookingService {
             .flatMap(bookingId -> {
                 BookingDocument doc = new BookingDocument();
                 // Map fields from request to doc
-                doc.setBookingRef(bookingId); // The generated ID [cite: 72]
+                doc.setBookingRef(bookingId); 
                 doc.setContainerSize(request.containerSize());
                 doc.setContainerType(request.containerType());
                 doc.setOrigin(request.origin());
