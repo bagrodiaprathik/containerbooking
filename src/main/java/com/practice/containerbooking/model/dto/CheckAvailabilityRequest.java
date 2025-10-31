@@ -1,12 +1,15 @@
 package com.practice.containerbooking.model.dto;
 
-import jakarta.validation.constraints.*;
 import com.practice.containerbooking.model.enums.ContainerType;
+import com.practice.containerbooking.validation.AllowedContainerSize;
+import jakarta.validation.constraints.*;
 
-// DTO for Endpoint 1: Check Availability 
+// DTO for Endpoint 1: Check Availability
 public record CheckAvailabilityRequest(
-    @NotNull
-    Integer containerSize, // Should add custom validation for (20, 40)
+    
+    @NotNull(message = "Container size is required")
+    @AllowedContainerSize
+    Integer containerSize,
 
     @NotNull
     ContainerType containerType,

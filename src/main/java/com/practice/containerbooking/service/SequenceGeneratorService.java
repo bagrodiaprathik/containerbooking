@@ -1,5 +1,15 @@
 package com.practice.containerbooking.service;
 
+import com.practice.containerbooking.model.entity.DatabaseSequence; // <-- ADD THIS IMPORT
+import org.springframework.data.mongodb.core.ReactiveMongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.mongodb.core.FindAndModifyOptions;
+import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
+
 @Service
 @RequiredArgsConstructor
 public class SequenceGeneratorService {
@@ -15,6 +25,7 @@ public class SequenceGeneratorService {
         
         // Options: return the *new* value after update, and create if it doesn't exist
         FindAndModifyOptions options = new FindAndModifyOptions().returnNew(true).upsert(true);
+
 
         return mongoOperations.findAndModify(query, update, options, DatabaseSequence.class)
             .map(counter -> "957" + String.format("%06d", counter.getSeq())); // Formats 1 as "957000001"

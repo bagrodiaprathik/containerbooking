@@ -4,12 +4,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 import com.practice.containerbooking.service.BookingService;
 import com.practice.containerbooking.model.dto.CheckAvailabilityRequest;
 import com.practice.containerbooking.model.dto.CheckAvailabilityResponse;
+import com.practice.containerbooking.model.dto.CreateBookingRequest;
+import com.practice.containerbooking.model.dto.CreateBookingResponse;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -22,9 +24,15 @@ public class BookingController {
     public Mono<CheckAvailabilityResponse> checkAvailability(
         @Valid @RequestBody Mono<CheckAvailabilityRequest> request
     ) {
-        // The .flatMap() chain handles the reactive stream
+        
         return request.flatMap(bookingService::checkAvailability);
     }
 
-    // ... (Endpoint 2 will go here)
+    @PostMapping
+    public Mono<CreateBookingResponse> createBooking(
+        @Valid @RequestBody Mono<CreateBookingRequest> request
+    ) {
+        return request.flatMap(bookingService::createBooking);
+    }
 }
+

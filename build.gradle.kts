@@ -43,6 +43,7 @@ dependencies {
 	testImplementation("org.springframework.cloud:spring-cloud-starter-contract-verifier")
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:mongodb")
+	testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

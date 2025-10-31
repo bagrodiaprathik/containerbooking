@@ -1,15 +1,17 @@
 package com.practice.containerbooking.model.entity;
 
+import com.practice.containerbooking.model.enums.ContainerType;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import com.practice.containerbooking.model.enums.ContainerType;
 
+@Data
 @Document(collection = "bookings")
 public class BookingDocument {
 
     @Id
-    private String bookingRef; // This will be our "957xxxxxx" PK [cite: 72]
+    private String bookingRef; // This will be our "957xxxxxx" PK
 
     @Field("container_size")
     private Integer containerSize;
@@ -22,6 +24,5 @@ public class BookingDocument {
     private Integer quantity;
     private String timestamp;
 
-    // Constructors, Getters, Setters...
-    // ...
+    // Getters and Setters are now automatically provided by @Data
 }
