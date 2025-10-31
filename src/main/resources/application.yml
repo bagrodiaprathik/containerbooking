@@ -5,13 +5,9 @@ maersk:
 spring:
   data:
     mongodb:
-      # This URI is used for local development.
-      # When running tests, Testcontainers will override this.
       uri: mongodb://localhost:27017/maersk_bookings
 
 logging:
   level:
-    # Set your application's log level to DEBUG
     com.practice.containerbooking: DEBUG
-    # Set Spring's MongoDB logs to INFO to see key operations
     org.springframework.data.mongodb.core: INFO

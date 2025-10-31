@@ -28,6 +28,6 @@ public class SequenceGeneratorService {
 
 
         return mongoOperations.findAndModify(query, update, options, DatabaseSequence.class)
-            .map(counter -> "957" + String.format("%06d", counter.getSeq())); // Formats 1 as "957000001"
+            .map(counter -> "957" + String.format("%06d", counter.getSeq()));
     }
 }
