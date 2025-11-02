@@ -2,14 +2,13 @@ package com.practice.containerbooking;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration;
+// We no longer need the exclude here.
+// import org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration;
 
 // --- THIS IS THE FIX ---
-// This line tells Spring Boot to NOT auto-configure security.
-// The "excludeName" property was invalid syntax and has been removed.
-@SpringBootApplication(exclude = {
-    ReactiveSecurityAutoConfiguration.class
-})
+// We remove the 'exclude' attribute.
+// This will allow Spring to load your controllers again.
+@SpringBootApplication
 public class ContainerbookingApplication {
 
 	public static void main(String[] args) {
@@ -17,4 +16,5 @@ public class ContainerbookingApplication {
 	}
 
 }
+
 
