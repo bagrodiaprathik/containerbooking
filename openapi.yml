@@ -1,0 +1,184 @@
+openapi: 3.0.0
+info:
+  title: Maersk Container Booking API
+  description: API for checking container availability and creating container bookings.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+tags:
+  - name: Bookings
+    description: Operations related to container bookings
+
+paths:
+  /api/bookings/check-availability:
+    post:
+      tags:
+        - Bookings
+      summary: Check if container space is available
+      description: Simulates a call to an external service to check for available container space based on booking requirements.
+      operationId: checkAvailability
+      requestBody:
+        description: Booking requirements to check for availability.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckAvailabilityRequest'
+      responses:
+        '200':
+          description: Availability response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckAvailabilityResponse'
+        '400':
+          description: Invalid input based on validation rules.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/bookings:
+    post:
+      tags:
+        - Bookings
+      summary: Create a new container booking
+      description: Creates a new booking and saves it to the database, returning a unique booking reference.
+      operationId: createBooking
+      requestBody:
+        description: Details of the booking to be created.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookingRequest'
+      responses:
+        '200':
+          description: Booking created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateBookingResponse'
+        '400':
+          description: Invalid input based on validation rules.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error (e.g., database issue).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    ContainerType:
+      type: string
+      enum:
+        - DRY
+        - REEFER
+      description: Type of container.
+
+    CheckAvailabilityRequest:
+      type: object
+      required:
+        - containerSize
+        - containerType
+        - origin
+        - destination
+        - quantity
+      properties:
+        containerSize:
+          type: integer
+          description: Size of the container (20 or 40).
+          enum: [20, 40]
+        containerType:
+          $ref: '#/components/schemas/ContainerType'
+        origin:
+          type: string
+          description: The origin of the booking.
+          minLength: 5
+          maxLength: 20
+          example: Southampton
+        destination:
+          type: string
+          description: The destination of the booking.
+          minLength: 5
+          maxLength: 20
+          example: Singapore
+        quantity:
+          type: integer
+          description: Number of containers required.
+          minimum: 1
+          maximum: 100
+          example: 5
+
+    CheckAvailabilityResponse:
+      type: object
+      properties:
+        available:
+          type: boolean
+          description: True if space is available, false otherwise.
+
+    CreateBookingRequest:
+      type: object
+      required:
+        - containerSize
+        - containerType
+        - origin
+        - destination
+        - quantity
+        - timestamp
+      properties:
+        containerSize:
+          type: integer
+          description: Size of the container (20 or 40).
+          enum: [20, 40]
+        containerType:
+          $ref: '#/components/schemas/ContainerType'
+        origin:
+          type: string
+          description: The origin of the booking.
+          minLength: 5
+          maxLength: 20
+          example: Southampton
+        destination:
+          type: string
+          description: The destination of the booking.
+          minLength: 5
+          maxLength: 20
+          example: Singapore
+        quantity:
+          type: integer
+          description: Number of containers required.
+          minimum: 1
+          maximum: 100
+          example: 5
+        timestamp:
+          type: string
+          format: date-time
+          description: ISO-8601 UTC date and time of the booking.
+          example: '2020-10-12T13:53:09Z'
+          pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$'
+
+    CreateBookingResponse:
+      type: object
+      properties:
+        bookingRef:
+          type: string
+          description: Unique, sequential booking reference number.
+          example: '957000001'
+          pattern: '^\d{9}$'
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: A human-readable error message.
+          example: 'Sorry there was a problem processing your request'
