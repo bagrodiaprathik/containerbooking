@@ -11,11 +11,25 @@ services:
     environment:
       # Database Configuration
       - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/maersk_bookings
-      # Security Profile Configuration
-      # By setting this profile, we disable the SecurityConfig.java file
-      - SPRING_PROFILES_ACTIVE=unsecured
+
+      # --- SECURITY SWITCH ---
+      # --- TO DISABLE SECURITY (for dev testing) ---
+      # 1. UNCOMMENT the line below:
+      # - SPRING_PROFILES_ACTIVE=unsecured
+
+      # --- TO ENABLE SECURITY (for production/token testing) ---
+      # 1. COMMENT OUT the line above.
+      # 2. UNCOMMENT the 4 lines below:
+      # - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://host.docker.internal:8181/realms/maersk
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
     depends_on:
       - mongo
+      # 2. (cont.) UNCOMMENT the line below:
+      # - keycloak
+
     networks:
       - app-network
 
@@ -30,13 +44,31 @@ services:
     networks:
       - app-network
 
-# Named volumes
+  # --- TO ENABLE SECURITY ---
+  # 3. UNCOMMENT the entire 'keycloak' service block below:
+  # keycloak:
+  #   image: quay.io/keycloak/keycloak:latest
+  #   container_name: maersk-keycloak
+  #   ports:
+  #     - "8181:8080"
+  #   environment:
+  #     - KEYCLOAK_ADMIN=admin
+  #     - KEYCLOAK_ADMIN_PASSWORD=admin
+  #     # This tells Keycloak its public-facing URL (for your browser)
+  #     - KC_HOSTNAME_ADMIN_URL=http://localhost:8181
+  #     # This tells Keycloak what to put in the token's "iss" claim (for the app)
+  #     - KC_HOSTNAME_URL=http://host.docker.internal:8181
+  #   command: start-dev --import-realm
+  #   volumes:
+  #     - ./keycloak-config:/opt/keycloak/data/import
+  #   networks:
+  #     - app-network
+
 volumes:
   # Named volume for MongoDB data persistence
   mongo-data:
     driver: local
 
-# Networks
 networks:
   app-network:
     driver: bridge
