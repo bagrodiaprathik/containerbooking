@@ -2,16 +2,18 @@ package com.practice.containerbooking.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile; // <-- Import this
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 /**
- * Configures the application's security settings using Spring Security 
+ * Configures the application's security settings using Spring Security
  * for a reactive (WebFlux) application.
  */
 @Configuration
 @EnableWebFluxSecurity
+@Profile("!unsecured") // <-- THIS IS THE SWITCH: Only apply security if 'unsecured' profile is NOT active
 public class SecurityConfig {
 
     /**
@@ -33,7 +35,7 @@ public class SecurityConfig {
                 // 4. All other requests to /api/bookings/** must be authenticated
                 .pathMatchers("/api/bookings/**").authenticated()
                 // 5. Any other request (e.g., to actuator/health) can be permitted (adjust as needed)
-                .anyExchange().permitAll() 
+                .anyExchange().permitAll()
             )
             
             // 6. Configure this app as an OAuth 2.0 Resource Server
@@ -46,3 +48,4 @@ public class SecurityConfig {
         return http.build();
     }
 }
+

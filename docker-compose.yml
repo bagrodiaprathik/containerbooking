@@ -11,11 +11,13 @@ services:
     environment:
       # Database Configuration
       - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/maersk_bookings
-      # Security Configuration
-      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://keycloak:8080/realms/maersk
+      # Security Profile Configuration
+      # By setting this profile, we disable the SecurityConfig.java file
+      - SPRING_PROFILES_ACTIVE=unsecured
     depends_on:
       - mongo
-      - keycloak
+    networks:
+      - app-network
 
   # MongoDB Database
   mongo:
@@ -25,20 +27,16 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    networks:
+      - app-network
 
-  # Keycloak Identity & Access Management (IAM) Server
-  keycloak:
-    image: quay.io/keycloak/keycloak:latest
-    container_name: maersk-keycloak
-    ports:
-      - "8181:8080"
-    environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-    command: start-dev --import-realm
-    volumes:
-      - ./keycloak-config:/opt/keycloak/data/import
-
+# Named volumes
 volumes:
   # Named volume for MongoDB data persistence
   mongo-data:
+    driver: local
+
+# Networks
+networks:
+  app-network:
+    driver: bridge
