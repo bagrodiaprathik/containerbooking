@@ -2,18 +2,20 @@ package com.practice.containerbooking.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile; // <-- Import this
+import org.springframework.context.annotation.Profile; // <-- ADD THIS IMPORT
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 /**
- * Configures the application's security settings using Spring Security
+ * Configures the application's security settings using Spring Security 
  * for a reactive (WebFlux) application.
+ *
+ * THIS CONFIGURATION IS ONLY ACTIVE WHEN THE "unsecured" PROFILE IS *NOT* ACTIVE.
  */
 @Configuration
 @EnableWebFluxSecurity
-@Profile("!unsecured") // <-- THIS IS THE SWITCH: Only apply security if 'unsecured' profile is NOT active
+@Profile("!unsecured")
 public class SecurityConfig {
 
     /**
@@ -48,4 +50,5 @@ public class SecurityConfig {
         return http.build();
     }
 }
+
 
