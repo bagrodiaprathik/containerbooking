@@ -1,0 +1,13 @@
+maersk:
+  api:
+    check-available-url: https://maersk.com/api/bookings/checkAvailable
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/maersk_bookings
+
+logging:
+  level:
+    com.practice.containerbooking: DEBUG
+    org.springframework.data.mongodb.core: INFO
