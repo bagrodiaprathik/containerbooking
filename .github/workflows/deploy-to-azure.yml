@@ -1,0 +1,117 @@
+name: Build, Push, and Deploy to Azure Container Apps
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: maersk-booking-api
+  
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v2
+        with:
+          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Extract metadata
+        id: meta
+        run: |
+          echo "tags=${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" >> $GITHUB_OUTPUT
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ steps.meta.outputs.tags }} .
+          docker push ${{ steps.meta.outputs.tags }}
+
+  deploy:
+    name: Deploy to Azure Container Apps
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    
+    steps:
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure Container Apps
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          resourceGroup: ${{ secrets.RESOURCE_GROUP_NAME }}
+          containerAppEnvironment: ${{ secrets.CONTAINER_APP_ENV_NAME }}
+          containerAppName: maersk-booking-app
+          yamlConfigPath: |
+            properties:
+              configuration:
+                secrets:
+                  - name: cosmos-db-connection-string
+                    value: ${{ secrets.COSMOS_DB_CONNECTION_STRING }}
+                ingress:
+                  external: true
+                  targetPort: 8080
+                  transport: http
+                  allowInsecure: false
+                  traffic:
+                    - weight: 100
+                      latestRevision: true
+                  customDomains: []
+                  
+              template:
+                containers:
+                  - name: keycloak
+                    image: quay.io/keycloak/keycloak:latest
+                    command:
+                      - start-dev
+                      - --import-realm
+                      - --hostname-url=https://${{ secrets.KEYCLOAK_HOSTNAME }}
+                      - --hostname-admin-url=https://${{ secrets.KEYCLOAK_HOSTNAME }}
+                    env:
+                      - name: KEYCLOAK_ADMIN
+                        value: admin
+                      - name: KEYCLOAK_ADMIN_PASSWORD
+                        secretRef: keycloak-admin-password
+                    resources:
+                      cpu: 0.5
+                      memory: 1Gi
+                      
+                  - name: booking-api
+                    image: ${{ needs.build-and-push.outputs.image-tag }}
+                    env:
+                      - name: SPRING_DATA_MONGODB_URI
+                        secretRef: cosmos-db-connection-string
+                      - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+                        value: http://localhost/realms/maersk
+                      - name: SERVER_PORT
+                        value: "8080"
+                    resources:
+                      cpu: 0.5
+                      memory: 1Gi
+                      
+                scale:
+                  minReplicas: 1
+                  maxReplicas: 3
+                  rules:
+                    - name: http-scaling
+                      http:
+                        metadata:
+                          concurrentRequests: 10
