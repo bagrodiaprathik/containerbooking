@@ -1,0 +1,74 @@
+{
+"info": {
+"_postman_id": "a8f5b8e0-a9c1-4b8b-8e27-a1c23a0b1f2b",
+"name": "Maersk Container Booking API",
+"description": "API for checking container availability and creating container bookings.",
+"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+},
+"item": [
+{
+"name": "Check Availability",
+"request": {
+"method": "POST",
+"header": [],
+"body": {
+"mode": "raw",
+"raw": "{\n  \"containerType\": \"DRY\",\n  \"containerSize\": 20,\n  \"origin\": \"Southampton\",\n  \"destination\": \"Singapore\",\n  \"quantity\": 5\n}",
+"options": {
+"raw": {
+"language": "json"
+}
+}
+},
+"url": {
+"raw": "{{baseUrl}}/api/bookings/check-availability",
+"host": [
+"{{baseUrl}}"
+],
+"path": [
+"api",
+"bookings",
+"check-availability"
+]
+},
+"description": "Simulates a call to an external service to check for available container space based on booking requirements."
+},
+"response": []
+},
+{
+"name": "Create Booking",
+"request": {
+"method": "POST",
+"header": [],
+"body": {
+"mode": "raw",
+"raw": "{\n  \"containerType\": \"DRY\",\n  \"containerSize\": 20,\n  \"origin\": \"Southampton\",\n  \"destination\": \"Singapore\",\n  \"quantity\": 5,\n  \"timestamp\": \"2024-10-12T13:53:09Z\"\n}",
+"options": {
+"raw": {
+"language": "json"
+}
+}
+},
+"url": {
+"raw": "{{baseUrl}}/api/bookings",
+"host": [
+"{{baseUrl}}"
+],
+"path": [
+"api",
+"bookings"
+]
+},
+"description": "Creates a new booking and saves it to the database, returning a unique booking reference."
+},
+"response": []
+}
+],
+"variable": [
+{
+"key": "baseUrl",
+"value": "http://localhost:8080",
+"type": "string"
+}
+]
+}
