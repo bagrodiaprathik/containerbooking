@@ -13,11 +13,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@WebFluxTest(BookingController.class) // We are only testing the Controller layer
+@WebFluxTest(BookingController.class)
+@ActiveProfiles("unsecured")
 public class BookingControllerTest {
 
     @Autowired

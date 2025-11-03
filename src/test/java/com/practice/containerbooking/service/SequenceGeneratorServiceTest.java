@@ -11,6 +11,7 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import reactor.test.StepVerifier;
+import org.springframework.test.context.ActiveProfiles;
 
 /**
  * This is an INTEGRATION TEST for the SequenceGeneratorService.
@@ -19,6 +20,7 @@ import reactor.test.StepVerifier;
  */
 @SpringBootTest
 @Testcontainers
+@ActiveProfiles("unsecured")
 class SequenceGeneratorServiceTest {
 
     // This annotation tells JUnit to manage the container
