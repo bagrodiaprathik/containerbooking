@@ -17,6 +17,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.boot.autoconfigure.data.mongo.MongoReactiveDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoReactiveAutoConfiguration;
 
+import org.springframework.context.annotation.Import;
+import com.practice.containerbooking.config.UnsecuredSecurityConfig;
+import com.practice.containerbooking.exception.GlobalExceptionHandler;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -28,6 +32,7 @@ import static org.mockito.Mockito.when;
     }
 )
 @ActiveProfiles("unsecured")
+@Import({UnsecuredSecurityConfig.class, GlobalExceptionHandler.class})
 public class BookingControllerTest {
 
     @Autowired
