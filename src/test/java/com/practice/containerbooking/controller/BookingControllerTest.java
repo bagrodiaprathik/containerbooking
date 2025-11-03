@@ -14,11 +14,19 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.autoconfigure.data.mongo.MongoReactiveDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoReactiveAutoConfiguration;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@WebFluxTest(BookingController.class)
+@WebFluxTest(
+    controllers = BookingController.class,
+    excludeAutoConfiguration = {
+        MongoReactiveAutoConfiguration.class,
+        MongoReactiveDataAutoConfiguration.class
+    }
+)
 @ActiveProfiles("unsecured")
 public class BookingControllerTest {
 
