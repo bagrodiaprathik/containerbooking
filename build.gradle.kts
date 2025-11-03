@@ -4,7 +4,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.6"
 }
 
-// This block ensures Spring Boot packages the jar correctly
+
 springBoot {
 	mainClass = "com.practice.containerbooking.ContainerbookingApplication"
 }
@@ -27,7 +27,6 @@ configurations {
 
 repositories {
 	mavenCentral()
-	// This repository is needed for Spring Cloud dependencies
 	maven { url = uri("https://repo.spring.io/release") }
 }
 
