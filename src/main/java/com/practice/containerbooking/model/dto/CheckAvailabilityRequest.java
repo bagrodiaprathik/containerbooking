@@ -11,7 +11,7 @@ public record CheckAvailabilityRequest(
     @AllowedContainerSize
     Integer containerSize,
 
-    @NotNull
+    @NotNull(message = "containerType must not be null")
     ContainerType containerType,
 
     @NotBlank @Size(min = 5, max = 20)
